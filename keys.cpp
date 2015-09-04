@@ -15,14 +15,7 @@ const char* AWS_ENDPOINT = "servicebus.windows.net";
 
 
 
-/* Contants describing DynamoDB table and values being used. */
-const char* HASH_KEY_NAME = "device_id";
-const char* HASH_KEY_VALUE = "jin1234"; // REPLACE with your team or particpant name e.g Team38
-const char* RANGE_KEY_NAME = "time";
-const char* RANGE_KEY_VALUE = "1";
-const char* TABLE_NAME = "m10new-DeviceDataTable-10WX560ZVUEIX"; //REPLACE with your DDB Table name e.g. hackday-2014-team38
-const char* ATTRIBUTE_NAME = "device";
-const char* ATTRIBUTE_VALUE = "mediatek";
+
 
 /* Constants describing Kinesis stream */
 const char* streamName = "m10new-DeviceStream-YQQ8HEN47JZF"; //REPLACE with your stream name e.g. hackday-2014-team38-TeamStream-1K5DAIU8GCRXY
