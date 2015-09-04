@@ -12,6 +12,7 @@
 #include "DeviceIndependentInterfaces.h"
 #include "AWSFoundationalTypes.h"
 #include "sha256.h"
+#include "keys.h"
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -19,37 +20,47 @@
 /* Constants string, formats, and lengths. */
 static const char* CANONICAL_FORM_POST_LINE = "POST\n/\n\n";
 static const int CANONICAL_FORM_POST_LINE_LEN = 8;
-static const char* HTTPS_REQUEST_POST_LINE =
-        "POST https://%s.%s.%s/ HTTP/1.1\n";
-static const int HTTPS_REQUEST_POST_LINE_LEN = 28;
+
+static const char* HTTPS_REQUEST_POST_LINE = "POST https://%s.%s.%s/%s/%s/%s/%s HTTP/1.1\n";
+static const int HTTPS_REQUEST_POST_LINE_LEN = 31; //dreamtcs to double confirm
+
 static const char* HTTP_REQUEST_POST_LINE = "POST http://%s.%s.%s/ HTTP/1.1\n";
 static const int HTTP_REQUEST_POST_LINE_LEN = 27;
+
 static const char* CURL_START = "curl --silent -X POST ";
 static const int CURL_START_LEN = 22;
+
 static const char* HTTPS_CURL_END = "https://%s.%s.%s";
 static const int HTTPS_CURL_END_LEN = 10;
+
 static const char* HTTP_CURL_END = "http://%s.%s.%s";
 static const int HTTP_CURL_END_LEN = 9;
-static const char* TO_SIGN_TEMPLATE =
-        "AWS4-HMAC-SHA256\n%sT%sZ\n%s/%s/%s/aws4_request\n%s";
+
+static const char* TO_SIGN_TEMPLATE = "AWS4-HMAC-SHA256\n%sT%sZ\n%s/%s/%s/aws4_request\n%s";
 static const int TO_SIGN_TEMPLATE_LEN = 36;
+
 static const char* CONTENT_LENGTH_HEADER = "content-length:%d";
 static const int CONTENT_LENGTH_HEADER_LEN = 15;
+
 static const char* HOST_HEADER = "host:%s.%s.%s";
 static const int HOST_HEADER_LEN = 7;
+
 static const char* CONNECTION_HEADER = "Connection:close";
 static const int CONNECTION_HEADER_LEN = 16;
+
 static const char* CONTENT_TYPE_HEADER = "content-type:%s";
 static const int CONTENT_TYPE_HEADER_LEN = 13;
+
 static const char* X_AMZ_DATE_HEADER = "x-amz-date:%sT%sZ";
 static const int X_AMZ_DATE_HEADER_LEN = 13;
+
 static const char* X_AMZ_TARGET_HEADER = "x-amz-target:%s";
 static const int X_AMZ_TARGET_HEADER_LEN = 13;
-static const char* AUTHORIZATION_HEADER =
-        "Authorization: AWS4-HMAC-SHA256 Credential=%s/%s/%s/%s/aws4_request, SignedHeaders=%s, Signature=%s";
-static const int AUTHORIZATION_HEADER_LEN = 87;
-static const char* SIGNED_HEADERS =
-        "content-length;content-type;host;x-amz-date;x-amz-target";
+
+static const char* AUTHORIZATION_HEADER = "Authorization: %s";
+static const int AUTHORIZATION_HEADER_LEN = 15; //dreamtcs might need to troubleshoot this
+
+static const char* SIGNED_HEADERS = "content-length;content-type;host;x-amz-date;x-amz-target";
 static const int SIGNED_HEADERS_LEN = 56;
 
 AWSClient::AWSClient() {
@@ -106,17 +117,23 @@ void AWSClient::initSignedHeaders() {
      * in the headers array, create the string, and add it's length to the
      * headerLens array. */
 
+	//count content length
+	//dreamtcs header=1
     int contentLen = payload.length();
     int len = CONTENT_LENGTH_HEADER_LEN + digitCount(contentLen);
     headers[headersCreated] = new char[len + 1]();
     sprintf(headers[headersCreated], CONTENT_LENGTH_HEADER, contentLen);
     headerLens[headersCreated++] = len;
 
+	//count content-type length
+	//dreamtcs header=2
     len = CONTENT_TYPE_HEADER_LEN + strlen(contentType);
     headers[headersCreated] = new char[len + 1]();
     sprintf(headers[headersCreated], CONTENT_TYPE_HEADER, contentType);
     headerLens[headersCreated++] = len;
 
+	//work on host
+	//dreamtcs header=3
     len = HOST_HEADER_LEN + strlen(awsService) + strlen(awsRegion)
             + strlen(awsEndpoint);
     headers[headersCreated] = new char[len + 1]();
@@ -124,15 +141,17 @@ void AWSClient::initSignedHeaders() {
             awsEndpoint);
     headerLens[headersCreated++] = len;
 
-    len = X_AMZ_DATE_HEADER_LEN + AWS_DATE_LEN + AWS_TIME_LEN;
-    headers[headersCreated] = new char[len + 1]();
-    sprintf(headers[headersCreated], X_AMZ_DATE_HEADER, awsDate, awsTime);
-    headerLens[headersCreated++] = len;
+	//dreamtcs we don't need this
+    //len = X_AMZ_DATE_HEADER_LEN + AWS_DATE_LEN + AWS_TIME_LEN;
+    //headers[headersCreated] = new char[len + 1]();
+    //sprintf(headers[headersCreated], X_AMZ_DATE_HEADER, awsDate, awsTime);
+    //headerLens[headersCreated++] = len;
 
-    len = X_AMZ_TARGET_HEADER_LEN + strlen(target);
-    headers[headersCreated] = new char[len + 1]();
-    sprintf(headers[headersCreated], X_AMZ_TARGET_HEADER, target);
-    headerLens[headersCreated++] = len;
+	//dreamtcs we don't need this
+    //len = X_AMZ_TARGET_HEADER_LEN + strlen(target);
+    //headers[headersCreated] = new char[len + 1]();
+    //sprintf(headers[headersCreated], X_AMZ_TARGET_HEADER, target);
+    //headerLens[headersCreated++] = len;
 }
 
 char* AWSClient::createStringToSign(void) {
@@ -231,6 +250,20 @@ void AWSClient::initUnsignedHeaders(const char* signature) {
     headers[headersCreated] = new char[len + 1]();
     strcpy(headers[headersCreated], CONNECTION_HEADER);
     headerLens[headersCreated++] = len;
+
+}
+
+void AWSClient::initUnsignedHeaders() {
+	int len = AUTHORIZATION_HEADER_LEN + strlen(SASString);
+	headers[headersCreated] = new char[len + 1]();
+	sprintf(headers[headersCreated], AUTHORIZATION_HEADER, SASString);
+	headerLens[headersCreated++] = len;
+
+	len = CONNECTION_HEADER_LEN;
+	headers[headersCreated] = new char[len + 1]();
+	strcpy(headers[headersCreated], CONNECTION_HEADER);
+	headerLens[headersCreated++] = len;
+
 }
 
 void AWSClient::createRequestInit(MinimalString &reqPayload) {
@@ -243,11 +276,16 @@ void AWSClient::createRequestInit(MinimalString &reqPayload) {
 
     //Create signature and headers
     initSignedHeaders();
-    char* toSign = createStringToSign();
-    char* signature = createSignature(toSign);
-    delete[] toSign;
-    initUnsignedHeaders(signature);
-    delete[] signature;
+	//dreamtcs header=3 after running this
+   
+	//dreamtcs we don't need this
+		//char* toSign = createStringToSign();
+		//char* signature = createSignature(toSign);
+		//delete[] toSign;
+		//initUnsignedHeaders();
+	initUnsignedHeaders();
+	//dreamtcs header=4 after running this
+		//delete[] signature;
 }
 
 void AWSClient::createRequestCleanup() {
@@ -257,16 +295,17 @@ void AWSClient::createRequestCleanup() {
     }
 }
 
+//dreamtcs create the post URL
 char* AWSClient::headersToRequest() {
     /* Determine whether to use https or http postLine values. */
     int postLineLen =
             httpS ? HTTPS_REQUEST_POST_LINE_LEN : HTTP_REQUEST_POST_LINE_LEN;
     const char* postLine =
             httpS ? HTTPS_REQUEST_POST_LINE : HTTP_REQUEST_POST_LINE;
-
     /* Calculate length of httpRequest string. */
     int httpRequestLen = postLineLen + strlen(awsService) + strlen(awsRegion)
-            + strlen(awsEndpoint);
+            + strlen(awsEndpoint) + strlen(eventhubname) + strlen(PUBLISHERS) + strlen(sendername)+ strlen(MESSAGES);
+
     for (int i = 0; i < headersCreated; i++) {
         /* +1 for newline. */
         httpRequestLen += *(headerLens + i) + 1;
@@ -278,13 +317,11 @@ char* AWSClient::headersToRequest() {
     char* httpRequest = new char[httpRequestLen + 1]();
     int httpRequestWritten = 0;
     httpRequestWritten += sprintf(httpRequest + httpRequestWritten, postLine,
-            awsService, awsRegion, awsEndpoint);
+            awsService, awsRegion, awsEndpoint,eventhubname,PUBLISHERS,sendername,MESSAGES);//dreamtcs need to validate this
     for (int i = 0; i < headersCreated; i++) {
-        httpRequestWritten += sprintf(httpRequest + httpRequestWritten, "%s\n",
-                *(headers + i));
+        httpRequestWritten += sprintf(httpRequest + httpRequestWritten, "%s\n", *(headers + i));
     }
-    httpRequestWritten += sprintf(httpRequest + httpRequestWritten, "\n%s",
-            payload.getCStr());
+    httpRequestWritten += sprintf(httpRequest + httpRequestWritten, "\n%s", payload.getCStr());
 
     return httpRequest;
 }

@@ -58,6 +58,10 @@ class AWSClient {
     /* Add the headers that will not be signed to the headers array. Called
      * after createSignature. */
     void initUnsignedHeaders(const char* signature);
+
+	/* Add the headers that will not be signed to the headers array. Called
+	* after createSignature. */
+	void initUnsignedHeaders();
     /* Contains all of the work to be done before headersToRequest or
      * headersToCurlRequest are called. Takes the payload to be sent and the
      * GMT date in yyyyMMddHHmmss format. */
@@ -82,6 +86,7 @@ protected:
     /* Content type of payload, eg. "application/x-amz-json-1.1". */
     const char* contentType;
     /* The request's target, i.e. "Kinesis_20131202.PutRecord". */
+	//dreamtcs need to try to remove this
     const char* target;
     /* Creates a raw http request, given the payload and current GMT date in
      * yyyyMMddHHmmss format. Should be exposed to user by extending class.

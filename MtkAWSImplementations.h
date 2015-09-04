@@ -21,7 +21,16 @@ protected:
     char* sendHTTPS(const char *request, const char* serverUrl, int port);
 };
 
-
+/* Experimental HttpClient for Mtk that takes a curl command. This class is needed for
+* testing purposes */
+class MtkHttpCurlClient : public IHttpClient {
+public:
+	MtkHttpCurlClient();
+	/* Send http request and return the response.*/
+	char* send(const char *request, const char* serverUrl, int port);
+	/* Returns true. Client uses a curl command. */
+	bool usesCurl(void);
+};
 
 /* IDateTimeProvider implementation to be used on the Mtk device. */
 class MtkDateTimeProvider: public IDateTimeProvider {

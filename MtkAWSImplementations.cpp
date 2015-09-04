@@ -185,8 +185,26 @@ bool MtkHttpClient::usesCurl() {
     return false;
 }
 // /*
+MtkHttpCurlClient::MtkHttpCurlClient() {
+}
 
+char* MtkHttpCurlClient::send(const char* request, const char* serverUrl,
+	int port) {
+	// call curl as a system call, passing 'request' as the system call command
+	//system (request + " >/dev/ttyGS0");
+	char* buffer = new char[1000]();
+	sprintf(buffer, "%s %s", request, ">/dev/ttyGS0");
+	char* response = new char[2 + 1]();
+	buffer[1000] = '\0';
+	system(buffer);
+	return response;
+}
 
+bool MtkHttpCurlClient::usesCurl() {
+	// Use curl command
+	return false;  // Mtk board does not support Curl
+}
+//*/
 
 
 

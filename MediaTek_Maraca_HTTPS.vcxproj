@@ -22,6 +22,7 @@
     <ProjectGuid>{C3F837D2-7752-4A80-9179-4FF43E8B04D7}</ProjectGuid>
     <RootNamespace>MediaTek_Maraca_HTTPS</RootNamespace>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <ProjectName>MediaTek_Maraca_HTTPS_Eventhub</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -74,7 +75,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>C:\Program Files (x86)\Arduino\hardware\arduino\mtk\cores\arduino;C:\Program Files (x86)\Arduino\hardware\arduino\mtk\variants\linkit_one;C:\Users\User\OneDrive\desktop on onedrive\Arduino\sketches\MediaTek_Maraca\MediaTek_Maraca_HTTPS;C:\Users\User\Documents\Arduino\libraries\DHT;C:\Users\User\Documents\Arduino\libraries\DHT\utility;C:\Program Files (x86)\Arduino\hardware\arduino\mtk\libraries\LDateTime;C:\Program Files (x86)\Arduino\hardware\arduino\mtk\libraries\LDateTime\utility;C:\Program Files (x86)\Arduino\hardware\arduino\mtk\libraries\LWiFi;C:\Program Files (x86)\Arduino\hardware\arduino\mtk\libraries\LWiFi\utility;C:\Program Files (x86)\Arduino\hardware\arduino\mtk\libraries\Wire;C:\Program Files (x86)\Arduino\hardware\arduino\mtk\libraries\Wire\utility;C:\Program Files (x86)\Arduino\libraries;C:\Program Files (x86)\Arduino\hardware\arduino\mtk\libraries;C:\Program Files (x86)\Microsoft Visual Studio 14.0\Common7\IDE\Extensions\york0bq3.kg1\Micro Platforms\default\debuggers;C:\Users\User\Documents\Arduino\libraries;C:\Users\User\AppData\Roaming\arduino15\packages\LinkIt\tools\arm-none-eabi-gcc\4.8.3-2014q1\4.8.3-2014q1\include;C:\Users\User\AppData\Roaming\arduino15\packages\LinkIt\tools\arm-none-eabi-gcc\4.8.3-2014q1\4.8.3-2014q1\include;C:\Users\User\AppData\Roaming\arduino15\packages\LinkIt\tools\arm-none-eabi-gcc\4.8.3-2014q1\lib\gcc\arm-none-eabi\4.8.3\include;C:\Users\User\AppData\Roaming\arduino15\packages\LinkIt\tools\arm-none-eabi-gcc\4.8.3-2014q1\lib\gcc\arm-none-eabi\4.8.3\include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Program Files (x86)\Arduino\hardware\arduino\mtk\cores\arduino;C:\Program Files (x86)\Arduino\hardware\arduino\mtk\variants\linkit_one;C:\Users\User\OneDrive\desktop on onedrive\Arduino\sketches\MediaTek_Maraca_Eventhub\MediaTek_Maraca_HTTPS;C:\Users\User\Documents\Arduino\libraries\DHT;C:\Users\User\Documents\Arduino\libraries\DHT\utility;C:\Program Files (x86)\Arduino\hardware\arduino\mtk\libraries\LDateTime;C:\Program Files (x86)\Arduino\hardware\arduino\mtk\libraries\LDateTime\utility;C:\Program Files (x86)\Arduino\hardware\arduino\mtk\libraries\LWiFi;C:\Program Files (x86)\Arduino\hardware\arduino\mtk\libraries\LWiFi\utility;C:\Program Files (x86)\Arduino\hardware\arduino\mtk\libraries\Wire;C:\Program Files (x86)\Arduino\hardware\arduino\mtk\libraries\Wire\utility;C:\Program Files (x86)\Arduino\libraries;C:\Program Files (x86)\Arduino\hardware\arduino\mtk\libraries;C:\Program Files (x86)\Microsoft Visual Studio 14.0\Common7\IDE\Extensions\york0bq3.kg1\Micro Platforms\default\debuggers;C:\Users\User\Documents\Arduino\libraries;C:\Users\User\AppData\Roaming\arduino15\packages\LinkIt\tools\arm-none-eabi-gcc\4.8.3-2014q1\4.8.3-2014q1\include;C:\Users\User\AppData\Roaming\arduino15\packages\LinkIt\tools\arm-none-eabi-gcc\4.8.3-2014q1\4.8.3-2014q1\include;C:\Users\User\AppData\Roaming\arduino15\packages\LinkIt\tools\arm-none-eabi-gcc\4.8.3-2014q1\lib\gcc\arm-none-eabi\4.8.3\include;C:\Users\User\AppData\Roaming\arduino15\packages\LinkIt\tools\arm-none-eabi-gcc\4.8.3-2014q1\lib\gcc\arm-none-eabi\4.8.3\include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ForcedIncludeFiles>C:\Users\User\Downloads\MediaTek_Maraca\MediaTek_Maraca_HTTPS\Visual Micro\.MediaTek_Maraca_HTTPS.vsarduino.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
       <IgnoreStandardIncludePath>true</IgnoreStandardIncludePath>
       <PreprocessorDefinitions>printf=iprintf;F_CPU=84000000L;ARDUINO=164;ARDUINO_MTK_ONE;ARDUINO_ARCH_MTK;__COMPILER_GCC__;__LINKIT_ONE__;__LINKIT_ONE_RELEASE__;USB_VID=0x0E8D;USB_PID=0x0023;USBCON;__cplusplus;GCC_VERSION=40803;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -127,8 +128,10 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AmazonKinesisClient.cpp" />
     <ClCompile Include="AWSClient.cpp" />
     <ClCompile Include="AWSFoundationalTypes.cpp" />
+    <ClCompile Include="AWShelperFunctions.cpp" />
     <ClCompile Include="DeviceIndependentInterfaces.cpp" />
     <ClCompile Include="jsmn.c" />
     <ClCompile Include="keys.cpp" />
@@ -137,12 +140,14 @@
     <ClCompile Include="Utils.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AmazonKinesisClient.h" />
     <ClInclude Include="AWSClient.h">
       <FileType>CppCode</FileType>
     </ClInclude>
     <ClInclude Include="AWSFoundationalTypes.h">
       <FileType>CppCode</FileType>
     </ClInclude>
+    <ClInclude Include="AWShelperFunctions.h" />
     <ClInclude Include="DeviceIndependentInterfaces.h">
       <FileType>CppCode</FileType>
     </ClInclude>

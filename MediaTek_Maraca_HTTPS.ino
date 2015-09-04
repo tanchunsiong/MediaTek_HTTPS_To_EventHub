@@ -7,16 +7,14 @@
 #include "MtkAWSImplementations.h"
 #include "AWSFoundationalTypes.h"
 #include "keys.h"
+#include "AWShelperFunctions.h"
 
 #include <dht11.h>
 #include <stdlib.h>
 #define dht_dpin 1 //no ; here. Set equal to channel sensor is on
 #include <stdio.h>
 
-/* Used to keep track of time. */
-IDateTimeProvider* dateTimeProvider;
-/* Used to send http to the server. */
-IHttpClient* httpClient;
+
 
 MtkHttpClient c;
 dht11 DHT;
@@ -62,7 +60,7 @@ void setup() {
         Serial.println("Begin Setup..");
         
         // Connect to WiFi (function loops until successful connection is made)
-	Mtk_Wifi_Setup(ssid, pass);
+	    Mtk_Wifi_Setup(ssid, pass);
         printWifiStatus();
         Serial.println("Wi-Fi connected");
         
@@ -70,7 +68,7 @@ void setup() {
         Serial.println("Sensors connected");
         //dreamtcs to change
         Serial.println("Client connected");
-
+	KinesisClient_Setup();
 	Serial.println("Setup complete! Looping main program");
 	Serial.println("Initial mode: KINESIS");      
         
@@ -84,7 +82,6 @@ enum {
 
 
 
-double xyz[3];
 
 void loop() {                
 
@@ -117,15 +114,15 @@ void loop() {
             strcat(buffer, dtostrf(temperatureC, 5, 2, dtostrfbuffer));
             strcat(buffer, "}");
             Serial.println(buffer);
-            
-            char* server="cspi2-ns.servicebus.windows.net";
-            char* data ="POST https://cspi2-ns.servicebus.windows.net/ehdevices/publishers/mediateksender/messages HTTP/1.1 \nAuthorization: SharedAccessSignature sr=https%3a%2f%2fcspi2-ns.servicebus.windows.net%2fehdevices%2fpublishers%2fmediateksender%2fmessages&sig=ast4SkZqdtP5GN7nOY6pGYerbWCbaOuc2SZ0ig3w3Xw%3d&se=1754891846&skn=mediateksender \nContent-Type: application/atom+xml;type=entry;charset=utf-8 \nHost: cspi2-ns.servicebus.windows.net \nContent-Length: 53 \n\n{ \"DeviceId\":\"dev-01\", \"Temperature\":\"37.0\" }";
-            char* response =httpClient->send(data, server, 443);
+	    putKinesis(buffer);
+            //char* server="cspi2-ns.servicebus.windows.net";
+            //char* data ="POST https://cspi2-ns.servicebus.windows.net/ehdevices/publishers/mediateksender/messages HTTP/1.1 \nAuthorization: SharedAccessSignature sr=https%3a%2f%2fcspi2-ns.servicebus.windows.net%2fehdevices%2fpublishers%2fmediateksender%2fmessages&sig=ast4SkZqdtP5GN7nOY6pGYerbWCbaOuc2SZ0ig3w3Xw%3d&se=1754891846&skn=mediateksender \nContent-Type: application/atom+xml;type=entry;charset=utf-8 \nHost: cspi2-ns.servicebus.windows.net \nContent-Length: 53 \n\n{ \"DeviceId\":\"dev-01\", \"Temperature\":\"37.0\" }";
+            //char* response =httpClient->send(data, server, 443);
             
             //char* server="cspi2-ns.servicebus.windows.net";
             //char* data ="GET https://www.facebook.com HTTP/1.1 \nHost: www.facebook.com \nConnection: close";
             //char* response =c.send(data, server, 443);
-            Serial.println(response);
+
 
 			
             delay(500);
@@ -150,7 +147,7 @@ void loop() {
             strcat(buffer, dtostrf(DHT.humidity, 5, 2, dtostrfbuffer));
             strcat(buffer, "}");
             Serial.println(buffer);
-             //putKinesis(buffer);
+            putKinesis(buffer);
             delay(500);
             // print string for light, separated by line for ease of reading
             memset(buffer, '\0', sizeof(buffer));
@@ -173,7 +170,7 @@ void loop() {
             strcat(buffer, dtostrf(lightsensorValue, 5, 3, dtostrfbuffer));
             strcat(buffer, "}");
             Serial.println(buffer);
-             //putKinesis(buffer);
+            putKinesis(buffer);
             delay(500);
             // print string for motion, separated by line for ease of reading
             memset(buffer, '\0', sizeof(buffer));
@@ -196,7 +193,7 @@ void loop() {
             strcat(buffer, dtostrf(motionvalue, 3, 1, dtostrfbuffer));
             strcat(buffer, "}");
             Serial.println(buffer);
-             //putKinesis(buffer);
+            putKinesis(buffer);
             delay(500);
 	} else {
 		Serial.println("Not publishing...");
