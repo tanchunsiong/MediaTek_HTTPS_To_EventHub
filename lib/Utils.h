@@ -73,4 +73,3 @@ char* hmacSha256(const char* key, int keyLen, const char* message,
         int messageLen);
 
 #endif /* UTILS_H_ */
-

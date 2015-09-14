@@ -32,4 +32,3 @@ public:
 };
 
 #endif /* AWSDEVICEINDEPENDENTINTERFACES_H_ */
-

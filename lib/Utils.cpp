@@ -389,4 +389,3 @@ char* hmacSha256(const char* key, int keyLen, const char* message,
     return final;
 }
 
-

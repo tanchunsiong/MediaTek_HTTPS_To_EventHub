@@ -3,20 +3,31 @@
 #include <LWiFiClient.h>
 #include <Wire.h>
 #include <LDateTime.h>
+#include <Utils.h>
+#include <AmazonKinesisClient.h>
+#include <MtkAWSImplementations.h>
 
-#include "MtkAWSImplementations.h"
-#include "AWSFoundationalTypes.h"
-#include "keys.h"
-#include "AWShelperFunctions.h"
 
-#include <dht11.h>
+AmazonKinesisClient kClient;
+
+/* Device independent implementations required for AmazonDynamoDBClient to
+ * function. */
+MtkHttpClient httpClient;
+//kinesis
+
+MtkDateTimeProvider dateTimeProvider;
+
+
+
+
+// It is an Arduino hack to include libraries that are referenced in other libraries. 
+// For example WiFi is used in AWS libraries but we still need to include in the main sketch file for it to be recognized.
+
+
 #include <stdlib.h>
-#define dht_dpin 1 //no ; here. Set equal to channel sensor is on
 #include <stdio.h>
-
-
-
-MtkHttpClient c;
+#include "dht11.h"
+#define dht_dpin 1 //no ; here. Set equal to channel sensor is on
 dht11 DHT;
 
 const int LightSensorPin = A0;  // Analog input pin that the potentiometer is attached to
@@ -44,43 +55,32 @@ char Units4[] = "binary";
 char buffer[300];
 char dtostrfbuffer[15];
 
-
-
-
 // It is an Arduino hack to include libraries that are referenced in other libraries. 
 // For example WiFi is used in AWS libraries but we still need to include in the main sketch file for it to be recognized.
 
-
-
 void setup() {
   	/* Begin serial communication. */
-	Serial.begin(9600);
-       
+	Serial.begin(115200);
        
         Serial.println("Begin Setup..");
         
         // Connect to WiFi (function loops until successful connection is made)
-	    Mtk_Wifi_Setup(ssid, pass);
+	Mtk_Wifi_Setup("ssid", "password");
+
         printWifiStatus();
         Serial.println("Wi-Fi connected");
-        
-
+        delay(500);
+         KinesisClient_Setup();
+        delay(500);
         Serial.println("Sensors connected");
         //dreamtcs to change
         Serial.println("Client connected");
-	KinesisClient_Setup();
+	
 	Serial.println("Setup complete! Looping main program");
 	Serial.println("Initial mode: KINESIS");      
-        
+
+
 }
-
-unsigned long currentTime = 0;
-unsigned long LastPostTime = 0;
-enum {
-	POSTING_PERIOD_MS = 500
-};
-
-
 
 
 void loop() {                
@@ -114,15 +114,8 @@ void loop() {
             strcat(buffer, dtostrf(temperatureC, 5, 2, dtostrfbuffer));
             strcat(buffer, "}");
             Serial.println(buffer);
-	    putKinesis(buffer);
-            //char* server="cspi2-ns.servicebus.windows.net";
-            //char* data ="POST https://cspi2-ns.servicebus.windows.net/ehdevices/publishers/mediateksender/messages HTTP/1.1 \nAuthorization: SharedAccessSignature sr=https%3a%2f%2fcspi2-ns.servicebus.windows.net%2fehdevices%2fpublishers%2fmediateksender%2fmessages&sig=ast4SkZqdtP5GN7nOY6pGYerbWCbaOuc2SZ0ig3w3Xw%3d&se=1754891846&skn=mediateksender \nContent-Type: application/atom+xml;type=entry;charset=utf-8 \nHost: cspi2-ns.servicebus.windows.net \nContent-Length: 53 \n\n{ \"DeviceId\":\"dev-01\", \"Temperature\":\"37.0\" }";
-            //char* response =httpClient->send(data, server, 443);
-            
-            //char* server="cspi2-ns.servicebus.windows.net";
-            //char* data ="GET https://www.facebook.com HTTP/1.1 \nHost: www.facebook.com \nConnection: close";
-            //char* response =c.send(data, server, 443);
-
+ putKinesis(GUID1,Org,Disp,Locn,Measure1,Units1,dtostrf(temperatureC, 5, 2, dtostrfbuffer));
+//kClient.putRecord(buffer);
 
 			
             delay(500);
@@ -144,10 +137,11 @@ void loop() {
             strcat(buffer, "\",\"unitofmeasure\":\"");
             strcat(buffer, Units2);
             strcat(buffer, "\",\"value\":");
+            //strcat(buffer, dtostrf(10, 5, 2, dtostrfbuffer));
             strcat(buffer, dtostrf(DHT.humidity, 5, 2, dtostrfbuffer));
             strcat(buffer, "}");
             Serial.println(buffer);
-            putKinesis(buffer);
+putKinesis(GUID2,Org,Disp,Locn,Measure2,Units2,dtostrf(DHT.humidity, 5, 2, dtostrfbuffer));
             delay(500);
             // print string for light, separated by line for ease of reading
             memset(buffer, '\0', sizeof(buffer));
@@ -170,7 +164,7 @@ void loop() {
             strcat(buffer, dtostrf(lightsensorValue, 5, 3, dtostrfbuffer));
             strcat(buffer, "}");
             Serial.println(buffer);
-            putKinesis(buffer);
+putKinesis(GUID3,Org,Disp,Locn,Measure3,Units3,dtostrf(lightsensorValue, 5, 3, dtostrfbuffer));
             delay(500);
             // print string for motion, separated by line for ease of reading
             memset(buffer, '\0', sizeof(buffer));
@@ -193,7 +187,7 @@ void loop() {
             strcat(buffer, dtostrf(motionvalue, 3, 1, dtostrfbuffer));
             strcat(buffer, "}");
             Serial.println(buffer);
-            putKinesis(buffer);
+putKinesis(GUID4,Org,Disp,Locn,Measure4,Units4,dtostrf(motionvalue, 3, 1, dtostrfbuffer));
             delay(500);
 	} else {
 		Serial.println("Not publishing...");
@@ -216,6 +210,53 @@ float get_light_level()
   lightSensor = 1 / lightSensor * 10;
   return (lightSensor);
 }
+void KinesisClient_Setup() {
+	kClient.setHttpClient(&httpClient);
+	kClient.setDateTimeProvider(&dateTimeProvider);
+}
+void putKinesis(String GUID, String Org, String Disp,String Locn, String Measure, String Units, String value) {
+	
+
+	char buffer[300];
+	String dataSource;
+	dataSource = String("{\"guid\":\"");
+	dataSource += GUID;
+	dataSource += String("\",\"organization\":\"");
+	dataSource += Org;
+	dataSource += String("\",\"timecreated\":\"");
+	dataSource += dateTimeProvider.getDateTime();
+	dataSource += String("\",\"displayname\":\"");
+	dataSource += Disp;
+	dataSource += String("\",\"location\":\"");
+	dataSource += Locn;
+	dataSource += String("\",\"measurename\":\"");
+	dataSource += Measure;
+	dataSource += String("\",\"unitofmeasure\":\"");
+	dataSource += Units;
+	dataSource += String("\",\"value\":");
+	dataSource += value;
+	dataSource += String("}");
+	dataSource.toCharArray(buffer, 300);
+	
+
+	// simple blind putRecord, no way to read output of System call for now
+	String output = kClient.putRecord(dataSource);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

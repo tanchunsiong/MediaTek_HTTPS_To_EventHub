@@ -128,44 +128,24 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="AmazonKinesisClient.cpp" />
-    <ClCompile Include="AWSClient.cpp" />
-    <ClCompile Include="AWSFoundationalTypes.cpp" />
-    <ClCompile Include="AWShelperFunctions.cpp" />
-    <ClCompile Include="DeviceIndependentInterfaces.cpp" />
-    <ClCompile Include="jsmn.c" />
-    <ClCompile Include="keys.cpp" />
-    <ClCompile Include="MtkAWSImplementations.cpp" />
-    <ClCompile Include="sha256.cpp" />
-    <ClCompile Include="Utils.cpp" />
+    <ClCompile Include="lib\AmazonKinesisClient.cpp" />
+    <ClCompile Include="lib\AWSClient.cpp" />
+    <ClCompile Include="lib\DeviceIndependentInterfaces.cpp" />
+    <ClCompile Include="lib\dht11.cpp" />
+    <ClCompile Include="lib\jsmn.c" />
+    <ClCompile Include="lib\MtkAWSImplementations.cpp" />
+    <ClCompile Include="lib\sha256.cpp" />
+    <ClCompile Include="lib\Utils.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="AmazonKinesisClient.h" />
-    <ClInclude Include="AWSClient.h">
-      <FileType>CppCode</FileType>
-    </ClInclude>
-    <ClInclude Include="AWSFoundationalTypes.h">
-      <FileType>CppCode</FileType>
-    </ClInclude>
-    <ClInclude Include="AWShelperFunctions.h" />
-    <ClInclude Include="DeviceIndependentInterfaces.h">
-      <FileType>CppCode</FileType>
-    </ClInclude>
-    <ClInclude Include="jsmn.h">
-      <FileType>CppCode</FileType>
-    </ClInclude>
-    <ClInclude Include="keys.h">
-      <FileType>CppCode</FileType>
-    </ClInclude>
-    <ClInclude Include="MtkAWSImplementations.h">
-      <FileType>CppCode</FileType>
-    </ClInclude>
-    <ClInclude Include="sha256.h">
-      <FileType>CppCode</FileType>
-    </ClInclude>
-    <ClInclude Include="Utils.h">
-      <FileType>CppCode</FileType>
-    </ClInclude>
+    <ClInclude Include="lib\AmazonKinesisClient.h" />
+    <ClInclude Include="lib\AWSClient.h" />
+    <ClInclude Include="lib\DeviceIndependentInterfaces.h" />
+    <ClInclude Include="lib\dht11.h" />
+    <ClInclude Include="lib\jsmn.h" />
+    <ClInclude Include="lib\MtkAWSImplementations.h" />
+    <ClInclude Include="lib\sha256.h" />
+    <ClInclude Include="lib\Utils.h" />
     <ClInclude Include="Visual Micro\.MediaTek_Maraca_HTTPS.vsarduino.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

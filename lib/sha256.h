@@ -85,4 +85,3 @@ private:
     /// hash, stored as integers
     uint32_t m_hash[8];
 };
-

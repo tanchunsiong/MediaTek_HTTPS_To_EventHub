@@ -607,4 +607,3 @@ char* SHA256::operator()(const void* data, size_t numBytes) {
 //  add(text.c_str(), text.size());
 //  return getHash();
 //}
-

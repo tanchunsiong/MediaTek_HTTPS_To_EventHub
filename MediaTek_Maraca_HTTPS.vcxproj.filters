@@ -18,69 +18,57 @@
     <None Include="MediaTek_Maraca_HTTPS.ino" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="AWSFoundationalTypes.cpp">
+    <ClCompile Include="lib\AmazonKinesisClient.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="MtkAWSImplementations.cpp">
+    <ClCompile Include="lib\AWSClient.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Utils.cpp">
+    <ClCompile Include="lib\DeviceIndependentInterfaces.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="jsmn.c">
+    <ClCompile Include="lib\dht11.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="keys.cpp">
+    <ClCompile Include="lib\jsmn.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="sha256.cpp">
+    <ClCompile Include="lib\MtkAWSImplementations.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DeviceIndependentInterfaces.cpp">
+    <ClCompile Include="lib\sha256.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="AmazonKinesisClient.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="AWShelperFunctions.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="AWSClient.cpp">
+    <ClCompile Include="lib\Utils.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="AWSFoundationalTypes.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="MtkAWSImplementations.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Utils.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="jsmn.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="keys.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="sha256.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Visual Micro\.MediaTek_Maraca_HTTPS.vsarduino.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="AWSClient.h">
+    <ClInclude Include="lib\AmazonKinesisClient.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DeviceIndependentInterfaces.h">
+    <ClInclude Include="lib\AWSClient.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="AmazonKinesisClient.h">
+    <ClInclude Include="lib\DeviceIndependentInterfaces.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="AWShelperFunctions.h">
+    <ClInclude Include="lib\dht11.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\jsmn.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\MtkAWSImplementations.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\sha256.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\Utils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

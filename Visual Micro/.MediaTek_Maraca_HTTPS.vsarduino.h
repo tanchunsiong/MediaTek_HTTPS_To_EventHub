@@ -106,21 +106,5 @@ extern "C" void __cxa_pure_virtual() {;}
 #define portOutputRegister(P)
 #define portInputRegister(P)
 #define portModeRegister(P)
-#include <MediaTek_Maraca_HTTPS.ino>
-#include <AWSClient.cpp>
-#include <AWSClient.h>
-#include <AWSFoundationalTypes.cpp>
-#include <AWSFoundationalTypes.h>
-#include <DeviceIndependentInterfaces.cpp>
-#include <DeviceIndependentInterfaces.h>
-#include <MtkAWSImplementations.cpp>
-#include <MtkAWSImplementations.h>
-#include <Utils.cpp>
-#include <Utils.h>
-#include <jsmn.c>
-#include <jsmn.h>
-#include <keys.cpp>
-#include <keys.h>
-#include <sha256.cpp>
-#include <sha256.h>
+
 #endif

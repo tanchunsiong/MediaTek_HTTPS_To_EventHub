@@ -36,9 +36,12 @@ void sslCb(VMINT handle, VMINT event) {
     Serial.println(event);
     
     switch(event) {
-        case VM_SSL_EVT_CONNECTED:
+	case VM_SSL_EVT_CONNECTED:{
+			Serial.println("VM_SSL_EVT_CONNECTED");
+	}
         case VM_SSL_EVT_CAN_WRITE:
         {
+			Serial.println("VM_SSL_EVT_CAN_WRITE");
             const size_t requestLength = strlen(pContext->request);
             
             ret = vm_ssl_write(handle, (VMUINT8*)pContext->request + pContext->data_sent, requestLength);
@@ -49,6 +52,7 @@ void sslCb(VMINT handle, VMINT event) {
         }
         case VM_SSL_EVT_CAN_READ:
             // make sure there is an terminating NULL
+			Serial.println("VM_SSL_EVT_CAN_READ");
             ret = vm_ssl_read(handle, (VMUINT8*)buf, sizeof(buf) - 1);
             while(ret > 0) {
                 pContext->response.concat(buf);
@@ -66,10 +70,15 @@ void sslCb(VMINT handle, VMINT event) {
             }
             break;
         case VM_SSL_EVT_PIPE_BROKEN:
+		{Serial.println("VM_SSL_EVT_CAN_READ"); }
         case VM_SSL_EVT_HOST_NOT_FOUND:
+		{Serial.println("VM_SSL_EVT_HOST_NOT_FOUND"); }
         case VM_SSL_EVT_PIPE_CLOSED:
+		{Serial.println("VM_SSL_EVT_PIPE_CLOSED"); }
         case VM_SSL_EVT_HANDSHAKE_FAILED:
+		{Serial.println("VM_SSL_EVT_HANDSHAKE_FAILED"); }
         case VM_SSL_EVT_CERTIFICATE_VALIDATION_FAILED:
+		{Serial.println("VM_SSL_EVT_CERTIFICATE_VALIDATION_FAILED"); }
             vm_ssl_close(handle);
             
             // Allow LTask.remoteCall() to return
@@ -104,12 +113,12 @@ boolean sendHttps(void* user_data) {
 char* MtkHttpClient::sendHTTPS(const char *request, const char* serverUrl, int port)
 {
 
-    Serial.print("Req=");
-    Serial.println(request);
-    Serial.print("URL=");
-    Serial.println(serverUrl);
-    Serial.print("Port=");
-    Serial.println(port);
+    //Serial.print("Req=");
+    //Serial.println(request);
+    //Serial.print("URL=");
+    //Serial.println(serverUrl);
+    //Serial.print("Port=");
+    //Serial.println(port);
 
     
     // This method is invoked in Arduino thread
@@ -131,10 +140,12 @@ char* MtkHttpClient::sendHTTPS(const char *request, const char* serverUrl, int p
     char* response = new char[len + 1]();
     context.response.toCharArray(response, len + 1);
     
-#if 1
-    Serial.println("returned response:");
-    Serial.println(response);
-#endif
+
+	//Serial.println("returned response:");
+	//Serial.println(response);
+
+
+
     
     return response;
 }
@@ -184,27 +195,8 @@ bool MtkHttpClient::usesCurl() {
     /* Does not use curl command. */
     return false;
 }
-// /*
-MtkHttpCurlClient::MtkHttpCurlClient() {
-}
 
-char* MtkHttpCurlClient::send(const char* request, const char* serverUrl,
-	int port) {
-	// call curl as a system call, passing 'request' as the system call command
-	//system (request + " >/dev/ttyGS0");
-	char* buffer = new char[1000]();
-	sprintf(buffer, "%s %s", request, ">/dev/ttyGS0");
-	char* response = new char[2 + 1]();
-	buffer[1000] = '\0';
-	system(buffer);
-	return response;
-}
 
-bool MtkHttpCurlClient::usesCurl() {
-	// Use curl command
-	return false;  // Mtk board does not support Curl
-}
-//*/
 
 
 
@@ -260,7 +252,7 @@ const char* MtkDateTimeProvider::getDateTime() {
     newDay = newDay > 31 ? 31 : newDay;
     
     /* Copy the values to dateTime and return it. */
-    sprintf(dateTime, "%.4d%.2d%.2d%.2d%.2d%.2d", year, month, newDay, newHour,
+    sprintf(dateTime, "%.4d-%.2d-%.2dT%.2d:%.2d:%.2d.0000000Z", year, month, newDay, newHour,
             newMinute, (int) newSecond);
     return dateTime;
 }
@@ -323,4 +315,6 @@ void Mtk_Wifi_Setup(const char* pSSID, const char* pPassword) {
         Serial.println("retry WiFi AP");
     }
 }
+
+
 
